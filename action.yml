@@ -1,0 +1,29 @@
+name: "Check Prisma Migrations"
+description: "Checks for table or column drops in Prisma migration files"
+author: "Quentin Grancher"
+inputs:
+  main-branch:
+    description: "Main branch to compare against"
+    required: true
+    default: "main"
+  path:
+    description: "Path to the migrations folder"
+    required: true
+    default: "prisma/migrations"
+  message:
+    description: "The message to post when a potential drop is detected"
+    required: false
+    default: "Warning: You are dropping a table or column in this migration."
+  fail:
+    description: "Whether to fail the workflow if a drop is detected"
+    required: false
+    default: false
+    type: boolean
+  warning:
+    description: "Whether to post a warning comment on the PR if a drop is detected"
+    required: false
+    default: true
+    type: boolean
+runs:
+  using: "node16"
+  main: "dist/index.js"
