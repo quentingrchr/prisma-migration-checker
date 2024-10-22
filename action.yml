@@ -7,18 +7,13 @@ inputs:
     required: true
     default: "main"
   path:
-    description: "Path to the migrations folder"
+    description: "Path to your Prisma folder (e.g., prisma)"
     required: true
-    default: "prisma/migrations"
+    default: "prisma"
   message:
-    description: "The message to post when a potential drop is detected"
+    description: "The message to post when a potential drop is detected, will default to a generic message"
     required: false
-    default: "Warning: You are dropping a table or column in this migration."
-  fail:
-    description: "Whether to fail the workflow if a drop is detected"
-    required: false
-    default: false
-    type: boolean
+    default: "⚠️ Warning: You are dropping a table or column in this migration.""
   warning:
     description: "Whether to post a warning comment on the PR if a drop is detected"
     required: false

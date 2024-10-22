@@ -1,59 +1,39 @@
 import * as core from '@actions/core';
-import { Octokit } from '@octokit/action';
-import type { PullRequestEvent } from '@octokit/webhooks-types';
-import { execSync } from 'node:child_process';
-import fs from 'node:fs';
+import {
+  checkForDropsInMigrationsFiles,
+  detectTableOrColumnDrop,
+  getModifiedFiles,
+  getOctokitClient,
+  warnWithCommentOnPR,
+} from './utils.js';
 
-// Initialisation de l'Octokit pour l'API GitHub
-const octokit = new Octokit();
-const [OWNER, REPOSITORY] = process.env.GITHUB_REPOSITORY!.split('/');
-
-// Fonction pour récupérer le numéro de la Pull Request
-function getPullRequestId(): number | null {
-  const eventData = fs.readFileSync(process.env.GITHUB_EVENT_PATH!, 'utf8');
-  const ev = JSON.parse(eventData) as PullRequestEvent;
-
-  return ev.pull_request ? ev.pull_request.number : null;
-}
-
-// Fonction pour détecter une suppression de colonne ou table dans un fichier de migration
-function detectTableOrColumnDrop(fileContent: string): boolean {
-  const dropRegex = /drop (table|column)/i;
-  return dropRegex.test(fileContent);
-}
-
-// Fonction pour obtenir la liste des fichiers modifiés dans une PR
-function getModifiedFiles(): string[] {
-  const stdout = execSync('git diff --name-only HEAD^1 HEAD').toString().trim();
-  return stdout.split('\n');
-}
-
-// Fonction principale de l'action
+// Main action function
 async function run(): Promise<void> {
   try {
-    const mainBranch = core.getInput('main-branch');
+    // Initialize Octokit for GitHub API
+    const octokit = getOctokitClient();
+
+    // Get inputs
     const path = core.getInput('path');
     const message = core.getInput('message');
-    const fail = core.getBooleanInput('fail');
     const warning = core.getBooleanInput('warning');
 
+    // Get modified files
     const modifiedFiles = getModifiedFiles();
+    console.log('Total modified files:', modifiedFiles.length);
 
-    // Filtre pour ne garder que les fichiers de migration Prisma
+    // Filter for Prisma migration files
+    // Path may have ./ prefix, so remove it if present (in the beginning)
+    const cleanPath = path.replace(/^.\//, '');
     const migrationFiles = modifiedFiles.filter(
-      (file) => file.startsWith(path) && file.endsWith('.sql')
+      (file) => file.startsWith(cleanPath) && file.endsWith('.sql')
     );
+    console.log('Modified migration files:', migrationFiles);
 
-    let hasTableOrColumnDrop = false;
-
-    // Parcourt chaque fichier de migration pour détecter une suppression de colonne ou table
-    for (const file of migrationFiles) {
-      const fileContent = fs.readFileSync(file, 'utf8');
-      if (detectTableOrColumnDrop(fileContent)) {
-        hasTableOrColumnDrop = true;
-        break;
-      }
-    }
+    const hasTableOrColumnDrop = checkForDropsInMigrationsFiles(
+      migrationFiles,
+      detectTableOrColumnDrop
+    );
 
     if (hasTableOrColumnDrop) {
       core.warning(
@@ -61,24 +41,15 @@ async function run(): Promise<void> {
       );
 
       if (warning) {
-        const pullRequestId = getPullRequestId();
-        if (pullRequestId) {
-          // Post a comment on the Pull Request
-          await octokit.issues.createComment({
-            owner: OWNER,
-            repo: REPOSITORY,
-            issue_number: pullRequestId,
-            body: message,
-          });
-        }
-      }
-
-      if (fail) {
-        core.setFailed('Potentially unsafe Prisma migration detected.');
+        await warnWithCommentOnPR(octokit, message);
       }
     } else {
       core.info('No table or column drop detected in the Prisma migration.');
     }
+
+    // Output the list of modified files
+    core.setOutput('modified_files', modifiedFiles);
+    core.setOutput('migration_files', migrationFiles);
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message);
@@ -86,4 +57,7 @@ async function run(): Promise<void> {
   }
 }
 
-run();
+await run().catch(() => {
+  console.error('Error executing the action');
+  process.exit(1);
+});
