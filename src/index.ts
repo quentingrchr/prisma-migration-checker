@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import {
   checkForDropsInMigrationsFiles,
-  detectDropTable,
+  detectDropPrisma,
   getModifiedFiles,
   getOctokitClient,
   warnWithCommentOnPR,
@@ -32,7 +32,7 @@ async function run(): Promise<void> {
 
     const hasTableOrColumnDrop = checkForDropsInMigrationsFiles(
       migrationFiles,
-      detectDropTable
+      detectDropPrisma
     );
 
     if (hasTableOrColumnDrop) {
