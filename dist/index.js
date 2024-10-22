@@ -54091,7 +54091,7 @@ module.exports = parseParams
 
 __nccwpck_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 /* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7484);
-/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(6557);
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(8100);
 
 
 // Main action function
@@ -54111,7 +54111,7 @@ async function run() {
         const cleanPath = path.replace(/^.\//, '');
         const migrationFiles = modifiedFiles.filter((file) => file.startsWith(cleanPath) && file.endsWith('.sql'));
         console.log('Modified migration files:', migrationFiles);
-        const hasTableOrColumnDrop = (0,_utils_js__WEBPACK_IMPORTED_MODULE_1__/* .checkForDropsInMigrationsFiles */ .Pj)(migrationFiles, _utils_js__WEBPACK_IMPORTED_MODULE_1__/* .detectTableOrColumnDrop */ .O);
+        const hasTableOrColumnDrop = (0,_utils_js__WEBPACK_IMPORTED_MODULE_1__/* .checkForDropsInMigrationsFiles */ .Pj)(migrationFiles, _utils_js__WEBPACK_IMPORTED_MODULE_1__/* .detectDropTable */ .pA);
         if (hasTableOrColumnDrop) {
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.warning('A table or column drop has been detected in the Prisma migration.');
             if (warning) {
@@ -54141,14 +54141,14 @@ __webpack_async_result__();
 
 /***/ }),
 
-/***/ 6557:
+/***/ 8100:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
 
 
 // EXPORTS
 __nccwpck_require__.d(__webpack_exports__, {
   Pj: () => (/* binding */ checkForDropsInMigrationsFiles),
-  O: () => (/* binding */ detectTableOrColumnDrop),
+  pA: () => (/* binding */ detectDropTable),
   j: () => (/* binding */ getModifiedFiles),
   DQ: () => (/* binding */ getOctokitClient),
   zz: () => (/* binding */ warnWithCommentOnPR)
@@ -57749,11 +57749,7 @@ function getApiBaseUrl() {
 var external_fs_ = __nccwpck_require__(9896);
 ;// CONCATENATED MODULE: external "node:child_process"
 const external_node_child_process_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:child_process");
-;// CONCATENATED MODULE: ./lib/const.js
-const DEFAULT_MESSAGE = '⚠️ Warning: You are dropping a table or column in this migration.';
-
 ;// CONCATENATED MODULE: ./lib/utils.js
-
 
 
 
@@ -57775,7 +57771,7 @@ function getPREventData() {
  * @param fileContent the content of the file to check
  * @returns {boolean} true if the file contains a drop table or column statement, false otherwise
  */
-function detectTableOrColumnDrop(fileContent) {
+function detectDropTable(fileContent) {
     const dropRegex = /drop (table|column)/i;
     return dropRegex.test(fileContent);
 }
@@ -57853,7 +57849,7 @@ async function warnWithCommentOnPR(octokit, message) {
         owner,
         repo,
         issue_number: pullRequestId,
-        body: message ?? DEFAULT_MESSAGE,
+        body: message,
     });
 }
 

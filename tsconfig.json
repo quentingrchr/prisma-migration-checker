@@ -11,5 +11,10 @@
     "resolveJsonModule": true
   },
   "include": ["src/**/*.ts", ".eslintrc.cjs"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "_tests/**/*.ts"],
+  "baseUrl": ".",
+  "paths": {
+    "@": ["/*"],
+    "@src": ["src/*"]
+  }
 }

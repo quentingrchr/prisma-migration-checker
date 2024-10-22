@@ -25,7 +25,7 @@ export function getPREventData(): PullRequestEvent {
  * @param fileContent the content of the file to check
  * @returns {boolean} true if the file contains a drop table or column statement, false otherwise
  */
-export function detectTableOrColumnDrop(fileContent: string): boolean {
+export function detectDropTable(fileContent: string): boolean {
   const dropRegex = /drop (table|column)/i;
   return dropRegex.test(fileContent);
 }

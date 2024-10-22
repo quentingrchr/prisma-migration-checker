@@ -2,8 +2,9 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   env: {
     node: true,
+    jest: true,
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'plugin:jest/recommended'],
   extends: ['xo', 'xo-typescript', 'prettier'],
   rules: {
     '@typescript-eslint/ban-types': 0,
