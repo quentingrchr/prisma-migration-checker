@@ -1,6 +1,5 @@
 # Prisma Drop Table Migration Warning
 
-![GitHub Actions](https://github.com/<username>/prisma-drop-table-migration-warning/actions/workflows/main.yml/badge.svg)
 
 ## Description
 
