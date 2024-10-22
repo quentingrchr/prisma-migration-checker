@@ -2,7 +2,6 @@ import { Octokit } from '@octokit/action';
 import type { PullRequestEvent } from '@octokit/webhooks-types';
 import fs from 'fs';
 import { execSync } from 'node:child_process';
-import { DEFAULT_MESSAGE } from './const.js';
 
 interface GitError extends Error {
   stderr?: string; // Include the stderr property
@@ -116,7 +115,7 @@ export function getPullRequestNumber(): number {
 
 export async function warnWithCommentOnPR(
   octokit: Octokit,
-  message?: string
+  message: string
 ): Promise<void> {
   const [owner, repo] = process.env.GITHUB_REPOSITORY!.split('/');
   const pullRequestId = getPullRequestNumber();
@@ -125,6 +124,6 @@ export async function warnWithCommentOnPR(
     owner,
     repo,
     issue_number: pullRequestId,
-    body: message ?? DEFAULT_MESSAGE,
+    body: message,
   });
 }
