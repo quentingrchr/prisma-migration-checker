@@ -1,6 +1,9 @@
 name: "Check Prisma Migrations"
 description: "Checks for table or column drops in Prisma migration files"
 author: "Quentin Grancher"
+branding:
+  icon: database
+  color: green
 inputs:
   main-branch:
     description: "Main branch to compare against"
