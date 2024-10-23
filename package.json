@@ -1,5 +1,5 @@
 {
-  "name": "prisma-drop-table-migration-warning",
+  "name": "prisma-drop-migration-warning",
   "author": "quentingrnchr",
   "license": "ISC",
   "description": "This action checks if a Prisma Migration in a pull request contains a drop table command and warns the user if it does.",

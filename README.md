@@ -1,9 +1,9 @@
-# Prisma Drop Table Migration Warning
+# Prisma Drop Migration Warning
 
 
 ## Description
 
-**Prisma Drop Table Migration Warning** is a GitHub Action that checks for table or column drops in Prisma migration files. It helps ensure that potentially unsafe changes are caught before they are merged into your main branch.
+**Prisma Drop Migration Warning ** is a GitHub Action that checks for table or column drops in Prisma migration files. It helps ensure that potentially unsafe changes are caught before they are merged into your main branch.
 
 ## Features
 
@@ -56,4 +56,6 @@ jobs:
           message: 'Potential drop detected in Prisma migration files.'
           warning: true
 ```
+
+
 

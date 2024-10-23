@@ -16,7 +16,7 @@ describe('detectDropPrisma', () => {
   });
 
   it('should return false if a column named "drop" or "table" present but not in a drop statement', () => {
-    const fileContent = 'CREATE TABLE users (id INT, drop INT);';
+    const fileContent = 'CREATE TABLE users (id INT, drop INT, table INT);';
     expect(detectDropPrisma(fileContent)).toBe(false);
   });
 });
